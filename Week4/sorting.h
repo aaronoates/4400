@@ -16,26 +16,34 @@
 
 template<typename Iter, typename Comparator>
 void bubbleSort(const Iter& begin, const Iter& end, Comparator compareFn){
-
+    for (Iter i = 0; i != end; i++) { //this is to ensure that if the final element needs to be sorted, it will not go out of range.
+        for (Iter j = 0; j != end - 1; j++) {
+            Iter place_holder; // if a swap needs to be made, it is temporarily assigned to this value.
+            if (begin[j] > begin [j + 1]){
+                place_holder = begin[j];
+                begin[j] = begin[j + 1];
+                begin[j + 1] = place_holder;
+            }
+        }
+    }
 }
 
 
 template<typename Iter, typename Comparator>
 void insertionSort(const Iter& begin, const Iter& end, Comparator compareFn){
-    bool swapped;
-    while (swapped) {
-        swapped = false;
-        Iter temporary_val;
-        for (Iter *begin; Iter *begin <= end - 1; *begin++) {
-            if (compareFn) {
-                
-            } else {
-                temporary_val = *begin;
-                *begin = *begin + 1;
-                *begin + 1 = temporary_val;
-                swapped = true;
-            }
+    for(Iter i = begin; i != end; i++) { //this is to ensure that if the final element needs to be sorted, it will not go out of range.
+        Iter key = *begin[i]; 
+        Iter j = i - 1;
+
+
+        while (j != end && compareFn(key,begin[j])) {
+        
+            begin[j + 1] = begin[j];
+            j--;
         }
+        
+        *begin[j + 1] = key;
     }
+    
 }
 
