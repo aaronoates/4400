@@ -21,18 +21,17 @@ template<typename T>
 class List
 {
 public:
-	//! An iterator over the list
-	class iterator;
 	
-private:
-    class Node{
+	
+    struct Node{
         T data;
-        unique_ptr<Node> next;
-        Node(const T& value) : data(value) next(nullptr) {} // Defines a constructor that takes a constant reference to a value of type T and initializes data member with the provided value.
+        std::unique_ptr<Node> next;
+        Node(const T& value) : data(value), next(nullptr) {} // Defines a constructor that takes a constant reference to a value of type T and initializes data member with the provided value.
         Node(T&& value) : data(std::move(value)), next(nullptr) {} // Move constructor that takes an r-value reference to a value of type T and initializes data by moving the provided value.
     };
 
 public:
+    //! An iterator over the list
     class iterator {
     public:
         iterator(Node* node) : current(node) {} //default constructor that takes a pointer to a node in the list, and initializes the current node to be the provided node.
@@ -74,9 +73,8 @@ public:
 		 *
 		 * @returns   an iterator to the previously-current element
 		 */
-		iterator operator++(int ignored)
-        {
-            iterator temp(*this->ignored);
+		iterator operator++(int ignored){
+            iterator temp(*this);
             ++(*this);
             return temp;
         }
@@ -91,8 +89,8 @@ public:
             return !(*this == other);
         }
 
-    private:
-        Node* current;
+   
+        Node* current; 
     };
 
 	//! Default constructor
@@ -152,12 +150,12 @@ public:
     }
 
 	//! Get an iterator to the beginning of the list
-	iterator begin(){
+	iterator begin() const{
         return iterator(head.get());
     }
 
 	//! Get an iterator just past the end of the list
-	iterator end(){
+	iterator end() const{
         return iterator(nullptr);
     }
 
@@ -223,7 +221,7 @@ public:
 	 *
 	 * @returns   an iterator pointing at the newly-inserted element
 	 */
-	iterator insert(iterator, const T& value){
+	iterator insert(iterator pos, const T& value){
         if (pos == begin()){
             push_front(value);
             return begin();
@@ -250,7 +248,7 @@ public:
 	 *
 	 * @returns   an iterator pointing at the newly-inserted element
 	 */
-	iterator insert(iterator, T&& value){
+	iterator insert(iterator pos, T&& value){
         if (pos == begin()){
             push_front(std::move(value));
             return begin();
@@ -268,7 +266,7 @@ public:
     }
 
 	//! Remove an element from an arbitrary location
-	void erase(iterator){
+	void erase(iterator pos){
         if (pos == begin()){
             head = std::move(head->next);
             if (!head){
@@ -289,9 +287,9 @@ public:
         --listSize;
     }
 
-private:
-	// Add whatever you need to add here
-    Node* head;
+    
+	public:
+    std::unique_ptr<Node> head;
     Node* tail;
     size_t listSize;
 
